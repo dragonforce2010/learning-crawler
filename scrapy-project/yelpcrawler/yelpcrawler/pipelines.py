@@ -20,5 +20,5 @@ class YelpPipeline(object):
         col = ','.join(item.keys())
         placeholders = ','.join(len(item.keys()) * '?')
         sql = 'insert into merchant({}) values({})'
-        self.cur.execute(sql.format(col, placeholders), item.values())
+        self.cur.execute(sql.format(col, placeholders),tuple(item.values()))
         return item

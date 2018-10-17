@@ -1,0 +1,7 @@
+__init__.py
+*.py[co]
+httpcache
+geckodriver.log
+*.swp
+*.un~
+

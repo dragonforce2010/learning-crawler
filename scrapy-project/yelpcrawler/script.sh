@@ -1,3 +1,6 @@
+# create a scrapy project
+scrapy startproject yelp
+
 # execute crawler yelp
 scrapy crawl yelp 
 

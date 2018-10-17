@@ -1,0 +1,37 @@
+crawler:
+  name: yelp
+  domain: https://www.yelp.com/
+  start_url:
+    - https://www.yelp.com/search?cflt=contractors&find_loc=1455+Market+St%2C+San+Francisco%2C+CA+94103
+    - https://www.yelp.com/search?cflt=contractors&find_loc=1455+Market+St%2C+San+Francisco%2C+CA+94105
+
+  parse_url:
+    url_selector: ul > li[class*="regular-search-result"] .biz-name.js-analytics-click
+    url_attribute: href
+
+  parse_detail:
+    merchant:
+      merchant_name:
+        selector: .biz-page-title
+        attribute: text
+      merchant_cell:
+        selector: .biz-phone
+        attribute: text
+      website_url:
+        selector: .biz-website a
+        attribute: text
+      address:
+        selector: address
+        attribute: text
+
+storage:
+  engine: sqlite # mysql, hbase, mongo
+  sqlite:
+    db_name: merchant
+    sqls:
+      table_creation: create table if not exists merchant(name varchar(100), address varchar(100), cell varchar(20), website_url varchar(50))
+  mysql:
+  hbase:
+  mongo:
+
+

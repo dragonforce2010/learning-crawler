@@ -1,22 +1,21 @@
 import scrapy
+import re
+from urllib.request import urlopen
 from bs4 import BeautifulSoup
 from yelpcrawler.items import MerchantItem
 
 class YelpCrawler(scrapy.Spider):
     name = 'yelp'
-    start_urls = ['https://www.yelp.com/search?cflt=contractors&find_loc=1455+Market+St%2C+San+Francisco%2C+CA+94103']
+
+    def __init__(self):
+        self.domain = 'https://www.yelp.com/'
+        self.start_urls = self.gen_start_urls()
 
     def parse(self, response):
-        domain = 'https://www.yelp.com/'
         res = BeautifulSoup(response.body, features='lxml')
-        count = 6
         for merchant in res.select('ul > li[class*="regular-search-result"]'):
-            if count <= 0:
-                return
-
-            count -= 1
             merchant_name = merchant.select('.indexed-biz-name')[0].text
-            merchant_url = domain + merchant.select('.biz-name.js-analytics-click')[0]['href']
+            merchant_url = self.domain + merchant.select('.biz-name.js-analytics-click')[0]['href']
             print('[Parse] merchant name: ', merchant_name)
             print('[Parse] merchant url: ', merchant_url)
 
@@ -27,7 +26,7 @@ class YelpCrawler(scrapy.Spider):
         
         try:
             merchant_name = res.select('.biz-page-title')[0].text.strip()
-            merchant_cell = res.select('.biz-phone')[0].text.strip()
+            merchant_cell = res.select('.biz-phone')[0].text.strip().replace(' ', '')
             merchant_website_url = res.select('.biz-website a')[0].text.strip()
             merchant_address = res.select('address')[0].text.strip()
 
@@ -40,3 +39,26 @@ class YelpCrawler(scrapy.Spider):
             return merchantItem
         except:
             return None
+
+    def gen_start_urls(self):
+        start_urls = []
+        base_url = 'https://www.yelp.com/search?find_loc='
+        city_names = self.get_city_names()
+
+        for target_city_name in city_names:
+            target_city_url = base_url + target_city_name.replace(' ', '+')
+            start_urls.append(target_city_url)
+
+        return start_urls
+
+    def get_city_names(self):
+        cities_page_url = 'https://www.yelp.com/city'
+        city_names = []
+
+        city_page_html = urlopen(cities_page_url).read().decode('utf-8')
+        soup = BeautifulSoup(city_page_html, features='lxml')
+        city_href_links = soup.find_all('a', {'href': re.compile('/city/.*?')})
+        for link in city_href_links:
+            city_names.append(link.get_text())
+
+        return city_names

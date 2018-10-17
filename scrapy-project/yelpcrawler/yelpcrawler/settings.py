@@ -11,7 +11,9 @@
 
 BOT_NAME = 'yelpcrawler'
 
-SPIDER_MODULES = ['yelpcrawler.spiders']
+SPIDER_MODULES = ['yelpcrawler.spiders.yelp_crawler_api'] # this spider is using beautiful soup + api
+SPIDER_MODULES = ['yelpcrawler.spiders.yelp_crawler'] # this spider is uing selenium
+
 NEWSPIDER_MODULE = 'yelpcrawler.spiders'
 
 
@@ -23,7 +25,7 @@ NEWSPIDER_MODULE = 'yelpcrawler.spiders'
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-#CONCURRENT_REQUESTS = 32
+# CONCURRENT_REQUESTS = 100
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://doc.scrapy.org/en/latest/topics/settings.html#download-delay
@@ -84,7 +86,7 @@ ITEM_PIPELINES = {
 
 # Enable and configure HTTP caching (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
-#HTTPCACHE_ENABLED = True
+# HTTPCACHE_ENABLED = True
 #HTTPCACHE_EXPIRATION_SECS = 0
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
