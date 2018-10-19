@@ -1,5 +1,5 @@
 __init__.py
-*.py[co]
+*.pyc
 httpcache
 geckodriver.log
 *.swp

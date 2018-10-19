@@ -9,7 +9,7 @@ class YelpCrawler(scrapy.Spider):
 
     def __init__(self):
         self.domain = 'https://www.yelp.com/'
-        self.start_urls = self.gen_start_urls()
+        self.start_urls = self.gen_start_urls()  
 
     def parse(self, response):
         res = BeautifulSoup(response.body, features='lxml')

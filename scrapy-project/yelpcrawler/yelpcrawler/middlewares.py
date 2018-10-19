@@ -6,7 +6,9 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
-
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from scrapy.http import HtmlResponse
 
 class YelpcrawlerSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -56,10 +58,25 @@ class YelpcrawlerSpiderMiddleware(object):
         spider.logger.info('Spider opened: %s' % spider.name)
 
 
-class YelpcrawlerDownloaderMiddleware(object):
+class YelpcrawlerSeleniumDownloaderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
     # scrapy acts as if the downloader middleware does not modify the
     # passed objects.
+
+    def __init__(self):
+        self.driver = self.init_chrome_driver()
+
+    def init_chrome_driver(self):
+        chrome_options = Options()
+        # chrome_options.add_argument('--headless')
+        chrome_options.add_argument('window-size=1920x3000') #指定浏览器分辨率
+        chrome_options.add_argument('--disable-gpu') #谷歌文档提到需要加上这个属性来规避bug
+        chrome_options.add_argument('--hide-scrollbars') #隐藏滚动条, 应对一些特殊页面
+        chrome_options.add_argument('blink-settings=imagesEnabled=false') #不加载图片, 提升速度
+        # chrome_options.add_argument('--headless') #浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败
+        # chrome_options.binary_location = r'/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary' #手动指定使用的浏览器位置
+        driver = webdriver.Chrome(chrome_options=chrome_options)
+        return driver
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -78,7 +95,8 @@ class YelpcrawlerDownloaderMiddleware(object):
         # - or return a Request object
         # - or raise IgnoreRequest: process_exception() methods of
         #   installed downloader middleware will be called
-        return None
+        self.driver.get(request.url)
+        return HtmlResponse(request.url, body=self.driver.page_source, encoding='utf-8', request=request)
 
     def process_response(self, request, response, spider):
         # Called with the response returned from the downloader.

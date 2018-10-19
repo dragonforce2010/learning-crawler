@@ -11,10 +11,8 @@
 
 BOT_NAME = 'yelpcrawler'
 
-SPIDER_MODULES = ['yelpcrawler.spiders.yelp_crawler_api'] # this spider is using beautiful soup + api
-SPIDER_MODULES = ['yelpcrawler.spiders.yelp_crawler'] # this spider is uing selenium
-
-NEWSPIDER_MODULE = 'yelpcrawler.spiders'
+SPIDER_MODULES = ['yelpcrawler.spiders.yelp_crawler']
+NEWSPIDER_MODULE = 'yelpcrawler.spiders'  
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
@@ -55,9 +53,9 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'yelpcrawler.middlewares.YelpcrawlerDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   'yelpcrawler.middlewares.YelpcrawlerSeleniumDownloaderMiddleware': 543,
+}
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
